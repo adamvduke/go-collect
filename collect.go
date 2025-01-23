@@ -8,10 +8,32 @@ import (
 
 // Apply returns a new []V created by collecting the result of applying the given
 // function to each element in the given slice.
-func Apply[Slice ~[]T, T any, V any](s Slice, yield func(T) V) []V {
+func Apply[Slice ~[]T, T any, V any](s Slice, applyFn func(T) V) []V {
 	out := make([]V, len(s))
 	for idx, t := range s {
-		out[idx] = yield(t)
+		out[idx] = applyFn(t)
+	}
+	return out
+}
+
+// Select returns a new []T created by applying the given function to each
+// element, and collecting the elements where the function returns true.
+func Select[Slice ~[]T, T any](s Slice, include func(T) bool) (out []T) {
+	for _, t := range s {
+		if include(t) {
+			out = append(out, t)
+		}
+	}
+	return out
+}
+
+// Reject returns a new []T created by applying the given function to each
+// element, and collecting the elements where the function returns false.
+func Reject[Slice ~[]T, T any](s Slice, exclude func(T) bool) (out []T) {
+	for _, t := range s {
+		if !exclude(t) {
+			out = append(out, t)
+		}
 	}
 	return out
 }
