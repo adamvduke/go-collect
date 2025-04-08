@@ -72,6 +72,13 @@ func ExampleReject() {
 	// Output: [1 2]
 }
 
+func ExampleUnique() {
+	input := []int{3, 1, 3, 4, 2, 4}
+	got := collect.Unique(input)
+	fmt.Println(got)
+	// Output: [3 1 4 2]
+}
+
 func ExampleKeys() {
 	input := map[int]any{1: "1", 2: 1.2, 12: struct{}{}}
 	got := collect.Keys(input)

@@ -38,6 +38,18 @@ func Reject[Slice ~[]T, T any](s Slice, exclude func(T) bool) (out []T) {
 	return out
 }
 
+// Unique returns a new []T created by removing any duplicate elements from s.
+func Unique[Slice ~[]T, T comparable](s Slice) (out []T) {
+	seen := make(map[T]struct{})
+	for _, v := range s {
+		if _, ok := seen[v]; !ok {
+			seen[v] = struct{}{}
+			out = append(out, v)
+		}
+	}
+	return out
+}
+
 // Keys returns a slice containing the keys from the given map. This is
 // different from the stdlib maps.Keys() in that the keys are materialized into
 // a slice rather than returned as an iter.Seq.

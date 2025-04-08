@@ -3,8 +3,9 @@ package collect_test
 import (
 	"testing"
 
-	"github.com/adamvduke/go-collect"
 	"github.com/stretchr/testify/require"
+
+	"github.com/adamvduke/go-collect"
 )
 
 type TypeA struct {
@@ -103,6 +104,52 @@ func TestReject_Struct(t *testing.T) {
 	})
 	want := []TypeA{{bar: "a"}, {bar: "bb"}}
 	require.ElementsMatch(t, got, want, "Reject(%+v, func(s TypeA) bool {...}) got: %+v, want: %v", input, got, want)
+}
+
+func TestUnique(t *testing.T) {
+	tests := []struct {
+		name  string
+		input any
+		want  any
+	}{
+		{
+			name:  "Unique_Int",
+			input: []int{1, 2, 3, 4, 2, 3},
+			want:  []int{1, 2, 3, 4},
+		},
+		{
+			name:  "Unique_String",
+			input: []string{"a", "bb", "ccc", "dddd", "bb", "ccc"},
+			want:  []string{"a", "bb", "ccc", "dddd"},
+		},
+		{
+			name: "Unique_Struct",
+			input: []TypeA{
+				{bar: "a"}, {bar: "bb"}, {bar: "ccc"}, {bar: "dddd"},
+				{bar: "bb"}, {bar: "ccc"},
+			},
+			want: []TypeA{
+				{bar: "a"}, {bar: "bb"}, {bar: "ccc"}, {bar: "dddd"},
+			},
+		},
+	}
+
+	for _, tcase := range tests {
+		t.Run(tcase.name, func(t *testing.T) {
+			var got any
+			switch input := tcase.input.(type) {
+			case []int:
+				got = collect.Unique(input)
+			case []string:
+				got = collect.Unique(input)
+			case []TypeA:
+				got = collect.Unique(input)
+			default:
+				t.Fatalf("unsupported input type: %T", input)
+			}
+			require.ElementsMatch(t, got, tcase.want, "Unique(%+v) got: %+v, want: %+v", tcase.input, got, tcase.want)
+		})
+	}
 }
 
 func TestKeys(t *testing.T) {
